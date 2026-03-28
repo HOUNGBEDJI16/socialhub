@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialHub — Tous vos réseaux, un seul endroit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: rgba(255,255,255,0.06);
+    --text: #f0f0f8;
+    --muted: #6b6b80;
+    --accent: #7c6aff;
+    --accent2: #ff6aac;
+    --glow: rgba(124,106,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,106,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,106,172,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .logo span {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; cursor: pointer;
+    transition: transform 0.2s;
+    color: white;
+  }
+  .avatar:hover { transform: scale(1.05); }
+
+  .notif-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .notif-btn:hover { border-color: var(--accent); }
+  .notif-dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent2);
+    border: 2px solid var(--bg);
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main {
+    padding-top: 90px;
+    min-height: 100vh;
+    position: relative; z-index: 1;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 60px 40px 40px;
+    text-align: center;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 100px;
+    background: rgba(124,106,255,0.1);
+    border: 1px solid rgba(124,106,255,0.25);
+    font-size: 12px; color: var(--accent);
+    font-weight: 500; margin-bottom: 20px;
+  }
+  .hero-label::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    color: var(--muted); font-size: 16px;
+    max-width: 400px; margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ─── PROFILE BAR ─── */
+  .profile-bar {
+    margin: 40px 40px 0;
+    padding: 24px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    display: flex; align-items: center; gap: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .profile-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 20px;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .profile-info { flex: 1; }
+  .profile-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .profile-handle { color: var(--muted); font-size: 13px; }
+
+  .profile-stats {
+    display: flex; gap: 24px;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 40px 40px 16px;
+  }
+
+  /* ─── NETWORKS GRID ─── */
+  .networks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 0 40px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .network-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+
+  .network-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+  }
+
+  .network-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: transparent;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--card-color, var(--accent));
+  }
+  .network-card:hover::before { opacity: 0.06; }
+
+  .network-card:active { transform: scale(0.97); }
+
+  .network-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    background: var(--card-color, var(--accent));
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--card-color, var(--accent)) 40%, transparent);
+    transition: transform 0.3s;
+  }
+  .network-card:hover .network-icon { transform: scale(1.1) rotate(-5deg); }
+
+  .network-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: 13px;
+  }
+
+  .network-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--accent2);
+    color: white; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 100px;
+  }
+
+  .network-status {
+    font-size: 11px; color: var(--muted);
+  }
+
+  /* ─── QUICK ACTIONS ─── */
+  .quick-actions {
+    display: flex; gap: 12px;
+    padding: 0 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .quick-actions::-webkit-scrollbar { display: none; }
+
+  .action-btn {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px; font-weight: 500;
+    white-space: nowrap;
+    color: var(--text);
+  }
+  .action-btn:hover {
+    border-color: var(--accent);
+    background: rgba(124,106,255,0.08);
+    color: var(--accent);
+  }
+  .action-btn .icon { font-size: 16px; }
+
+  /* ─── ACTIVITY FEED ─── */
+  .feed {
+    padding: 0 40px 100px;
+    display: flex; flex-direction: column; gap: 10px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .feed-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .feed-item:hover {
+    border-color: rgba(255,255,255,0.1);
+    background: var(--surface2);
+    transform: translateX(4px);
+  }
+
+  .feed-platform {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    background: var(--item-color, var(--surface2));
+  }
+
+  .feed-content { flex: 1; min-width: 0; }
+  .feed-title {
+    font-size: 13px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .feed-meta { font-size: 11px; color: var(--muted); }
+
+  .feed-time { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+
+  .feed-unread {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 12px 0 20px;
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 4px 0;
+  }
+
+  .nav-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .nav-item.active .nav-icon {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 8px 20px rgba(124,106,255,0.35);
+    transform: translateY(-4px) scale(1.05);
+  }
+
+  .nav-label {
+    font-size: 10px; font-weight: 500;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav-item.active .nav-label { color: var(--accent); }
+
+  /* ─── POST COMPOSER ─── */
+  .compose-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    align-items: flex-end; justify-content: center;
+  }
+  .compose-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+  .compose-sheet {
+    width: 100%; max-width: 600px;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border);
+    padding: 24px;
+    animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .compose-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .compose-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 18px;
+  }
+  .compose-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px;
+    transition: all 0.2s;
+  }
+  .compose-close:hover { border-color: var(--accent); }
+
+  .compose-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    resize: none; height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .compose-textarea:focus { border-color: var(--accent); }
+  .compose-textarea::placeholder { color: var(--muted); }
+
+  .compose-platforms {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .compose-platform {
+    padding: 6px 14px; border-radius: 100px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 12px; cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .compose-platform.selected {
+    background: rgba(124,106,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .compose-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px;
+  }
+  .compose-tools { display: flex; gap: 8px; }
+  .compose-tool {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px;
+    transition: all 0.2s;
+  }
+  .compose-tool:hover { border-color: var(--accent); }
+
+  .publish-btn {
+    padding: 10px 24px; border-radius: 100px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 6px 20px rgba(124,106,255,0.3);
+  }
+  .publish-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px rgba(124,106,255,0.45);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+
+  /* ─── REVIEWS SECTION ─── */
+  .reviews-summary {
+    margin: 0 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex; gap: 24px; align-items: center;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+
+  .reviews-score-big {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0;
+    min-width: 90px;
+    border-right: 1px solid var(--border);
+    padding-right: 24px;
+  }
+  .score-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 52px;
+    line-height: 1;
+    background: linear-gradient(135deg, #ffd166, #ff9a3c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .score-stars { display: flex; gap: 2px; margin: 6px 0; }
+  .star { font-size: 14px; }
+  .star.empty { opacity: 0.25; }
+  .score-count { font-size: 11px; color: var(--muted); }
+
+  .reviews-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-label { font-size: 11px; color: var(--muted); width: 10px; text-align: right; }
+  .bar-track {
+    flex: 1; height: 6px; border-radius: 100px;
+    background: var(--surface2);
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, #ffd166, #ff9a3c);
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .bar-count { font-size: 10px; color: var(--muted); width: 20px; }
+
+  /* REVIEW CARDS */
+  .reviews-list {
+    padding: 0 40px;
+    display: flex; flex-direction: column; gap: 12px;
+    animation: fadeUp 0.6s 0.45s ease both;
+  }
+
+  .review-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .review-card:hover {
+    border-color: rgba(255,255,255,0.1);
+    background: var(--surface2);
+  }
+
+  .review-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .review-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 15px;
+    flex-shrink: 0; color: white;
+  }
+
+  .review-meta { flex: 1; }
+  .review-author {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .review-platform-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--muted);
+  }
+
+  .review-stars { display: flex; gap: 2px; }
+  .review-star { font-size: 13px; }
+  .review-star.empty { opacity: 0.2; }
+
+  .review-date { font-size: 11px; color: var(--muted); }
+
+  .review-text {
+    font-size: 13px; line-height: 1.65;
+    color: rgba(240,240,248,0.85);
+    margin-bottom: 14px;
+  }
+
+  .review-actions {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .review-action {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 100px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 11px; cursor: pointer; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .review-action:hover { border-color: var(--accent); color: var(--accent); }
+  .review-action.liked { border-color: var(--accent2); color: var(--accent2); background: rgba(255,106,172,0.08); }
+
+  .review-verified {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 11px; color: #4cde80;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* WRITE REVIEW BUTTON */
+  .write-review-btn {
+    margin: 0 40px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, rgba(124,106,255,0.12), rgba(255,106,172,0.08));
+    border: 1px dashed rgba(124,106,255,0.35);
+    border-radius: 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    transition: all 0.25s;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .write-review-btn:hover {
+    border-color: var(--accent);
+    background: rgba(124,106,255,0.1);
+    transform: translateY(-2px);
+  }
+  .write-review-icon {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .write-review-text { flex: 1; }
+  .write-review-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600; font-size: 14px; margin-bottom: 2px;
+  }
+  .write-review-sub { font-size: 12px; color: var(--muted); }
+
+  /* REVIEW MODAL */
+  .review-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    align-items: flex-end; justify-content: center;
+  }
+  .review-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+  .review-sheet {
+    width: 100%; max-width: 600px;
+    background: var(--surface);
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border);
+    padding: 28px;
+    animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .review-sheet-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .review-sheet-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 18px;
+  }
+
+  .star-picker {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .star-pick {
+    font-size: 36px; cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: grayscale(1) opacity(0.3);
+  }
+  .star-pick.active {
+    filter: none;
+    transform: scale(1.15);
+  }
+  .star-pick:hover { transform: scale(1.2); filter: none; }
+
+  .star-label {
+    text-align: center; font-size: 13px; font-weight: 600;
+    color: var(--accent); height: 20px; margin-bottom: 16px;
+  }
+
+  .review-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    resize: none; height: 90px;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 14px;
+  }
+  .review-input:focus { border-color: var(--accent); }
+  .review-input::placeholder { color: var(--muted); }
+
+  .review-network-pick {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;
+  }
+  .r-platform {
+    padding: 6px 14px; border-radius: 100px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 12px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .r-platform.selected {
+    background: rgba(124,106,255,0.15);
+    border-color: var(--accent); color: var(--accent);
+  }
+
+  .submit-review-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 14px;
+    color: white; font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 15px;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(124,106,255,0.3);
+  }
+  .submit-review-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(124,106,255,0.45);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .reviews-summary { margin: 0 20px; }
+    .reviews-list { padding: 0 20px; }
+    .write-review-btn { margin: 0 20px; }
+    header { padding: 16px 20px; }
+    .hero { padding: 40px 20px 30px; }
+    .profile-bar { margin: 24px 20px 0; padding: 18px 20px; }
+    .profile-stats { display: none; }
+    .section-title { padding: 30px 20px 12px; }
+    .networks-grid { padding: 0 20px; grid-template-columns: repeat(3, 1fr); }
+    .quick-actions { padding: 0 20px; }
+    .feed { padding: 0 20px 100px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Social<span>Hub</span></div>
+  <div class="header-right">
+    <div class="notif-btn" onclick="showToast('3 nouvelles notifications')">
+      <span>🔔</span>
+      <div class="notif-dot"></div>
+    </div>
+    <div class="avatar" onclick="showToast('Profil')">M</div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">Tous connectés</div>
+    <h1>Vos réseaux,<br><em>un seul endroit</em></h1>
+    <p>Gérez, publiez et naviguez entre tous vos réseaux sociaux sans jamais quitter l'app.</p>
+  </div>
+
+  <!-- PROFILE BAR -->
+  <div class="profile-bar">
+    <div class="profile-avatar">M</div>
+    <div class="profile-info">
+      <div class="profile-name">Marie Dupont</div>
+      <div class="profile-handle">@mariedupont · 6 réseaux connectés</div>
+    </div>
+    <div class="profile-stats">
+      <div class="stat">
+        <div class="stat-num">12k</div>
+        <div class="stat-label">Abonnés</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">248</div>
+        <div class="stat-label">Posts</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4.2k</div>
+        <div class="stat-label">J'aime</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-title">Actions rapides</div>
+  <div class="quick-actions">
+    <button class="action-btn" onclick="openCompose()"><span class="icon">✍️</span> Publier partout</button>
+    <button class="action-btn" onclick="showToast('Messages ouverts')"><span class="icon">💬</span> Messages</button>
+    <button class="action-btn" onclick="showToast('Statistiques')"><span class="icon">📊</span> Statistiques</button>
+    <button class="action-btn" onclick="showToast('Programmation')"><span class="icon">📅</span> Programmer</button>
+    <button class="action-btn" onclick="showToast('Tendances')"><span class="icon">🔥</span> Tendances</button>
+  </div>
+
+  <!-- NETWORKS GRID -->
+  <div class="section-title">Mes réseaux</div>
+  <div class="networks-grid">
+
+    <div class="network-card" style="--card-color: #1877f2" onclick="openNetwork('Facebook')">
+      <div class="network-badge">12</div>
+      <div class="network-icon">📘</div>
+      <div class="network-name">Facebook</div>
+      <div class="network-status">12 notifications</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #e1306c" onclick="openNetwork('Instagram')">
+      <div class="network-badge">47</div>
+      <div class="network-icon">📸</div>
+      <div class="network-name">Instagram</div>
+      <div class="network-status">47 j'aime</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #1da1f2" onclick="openNetwork('X / Twitter')">
+      <div class="network-icon">🐦</div>
+      <div class="network-name">X / Twitter</div>
+      <div class="network-status">À jour</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #0a66c2" onclick="openNetwork('LinkedIn')">
+      <div class="network-badge">3</div>
+      <div class="network-icon">💼</div>
+      <div class="network-name">LinkedIn</div>
+      <div class="network-status">3 connexions</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #ff0050" onclick="openNetwork('TikTok')">
+      <div class="network-icon">🎵</div>
+      <div class="network-name">TikTok</div>
+      <div class="network-status">2.1k vues</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #ff4500" onclick="openNetwork('Reddit')">
+      <div class="network-icon">🤖</div>
+      <div class="network-name">Reddit</div>
+      <div class="network-status">À jour</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #6441a5" onclick="openNetwork('Twitch')">
+      <div class="network-icon">🎮</div>
+      <div class="network-name">Twitch</div>
+      <div class="network-status">Hors ligne</div>
+    </div>
+
+    <div class="network-card" style="--card-color: #ff6b35" onclick="showAddNetwork()">
+      <div class="network-icon" style="background: var(--surface2); box-shadow: none; font-size: 28px;">＋</div>
+      <div class="network-name">Ajouter</div>
+      <div class="network-status">Connecter</div>
+    </div>
+
+  </div>
+
+  <!-- ACTIVITY FEED -->
+  <div class="section-title">Activité récente</div>
+  <div class="feed">
+
+    <div class="feed-item" onclick="showToast('Ouverture Instagram')">
+      <div class="feed-platform" style="--item-color: rgba(225,48,108,0.15)">📸</div>
+      <div class="feed-content">
+        <div class="feed-title">@thomas a aimé votre photo</div>
+        <div class="feed-meta">Instagram · Il y a 2 min</div>
+      </div>
+      <div class="feed-unread"></div>
+      <div class="feed-time">02:14</div>
+    </div>
+
+    <div class="feed-item" onclick="showToast('Ouverture LinkedIn')">
+      <div class="feed-platform" style="--item-color: rgba(10,102,194,0.15)">💼</div>
+      <div class="feed-content">
+        <div class="feed-title">Sophie Martin a accepté votre invitation</div>
+        <div class="feed-meta">LinkedIn · Il y a 15 min</div>
+      </div>
+      <div class="feed-unread"></div>
+      <div class="feed-time">14:52</div>
+    </div>
+
+    <div class="feed-item" onclick="showToast('Ouverture X')">
+      <div class="feed-platform" style="--item-color: rgba(29,161,242,0.15)">🐦</div>
+      <div class="feed-content">
+        <div class="feed-title">Votre tweet a été retweeté 18 fois</div>
+        <div class="feed-meta">X / Twitter · Il y a 1h</div>
+      </div>
+      <div class="feed-time">13:40</div>
+    </div>
+
+    <div class="feed-item" onclick="showToast('Ouverture TikTok')">
+      <div class="feed-platform" style="--item-color: rgba(255,0,80,0.15)">🎵</div>
+      <div class="feed-content">
+        <div class="feed-title">Votre vidéo dépasse 2 000 vues !</div>
+        <div class="feed-meta">TikTok · Il y a 2h</div>
+      </div>
+      <div class="feed-time">12:30</div>
+    </div>
+
+    <div class="feed-item" onclick="showToast('Ouverture Facebook')">
+      <div class="feed-platform" style="--item-color: rgba(24,119,242,0.15)">📘</div>
+      <div class="feed-content">
+        <div class="feed-title">Luc a commenté votre publication</div>
+        <div class="feed-meta">Facebook · Il y a 3h</div>
+      </div>
+      <div class="feed-time">11:20</div>
+    </div>
+
+    <div class="feed-item" onclick="showToast('Ouverture Reddit')">
+      <div class="feed-platform" style="--item-color: rgba(255,69,0,0.15)">🤖</div>
+      <div class="feed-content">
+        <div class="feed-title">Votre post a reçu 124 upvotes</div>
+        <div class="feed-meta">Reddit · Il y a 5h</div>
+      </div>
+      <div class="feed-time">09:00</div>
+    </div>
+
+  </div>
+
+  <!-- ═══ REVIEWS SECTION ═══ -->
+  <div class="section-title">Avis des utilisateurs</div>
+
+  <!-- Summary score -->
+  <div class="reviews-summary">
+    <div class="reviews-score-big">
+      <div class="score-num">4.6</div>
+      <div class="score-stars">
+        <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+        <span class="star">⭐</span><span class="star" style="opacity:0.4">⭐</span>
+      </div>
+      <div class="score-count">128 avis</div>
+    </div>
+    <div class="reviews-bars">
+      <div class="bar-row"><span class="bar-label">5</span><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div><span class="bar-count">92</span></div>
+      <div class="bar-row"><span class="bar-label">4</span><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><span class="bar-count">23</span></div>
+      <div class="bar-row"><span class="bar-label">3</span><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><span class="bar-count">8</span></div>
+      <div class="bar-row"><span class="bar-label">2</span><div class="bar-track"><div class="bar-fill" style="width:2%"></div></div><span class="bar-count">3</span></div>
+      <div class="bar-row"><span class="bar-label">1</span><div class="bar-track"><div class="bar-fill" style="width:1%"></div></div><span class="bar-count">2</span></div>
+    </div>
+  </div>
+
+  <!-- Write review CTA -->
+  <div class="section-title" style="padding-bottom:12px">Votre avis</div>
+  <div class="write-review-btn" onclick="openReview()">
+    <div class="write-review-icon">✍️</div>
+    <div class="write-review-text">
+      <div class="write-review-title">Laisser un avis</div>
+      <div class="write-review-sub">Notez l'app et partagez votre expérience</div>
+    </div>
+    <span style="color:var(--muted); font-size:18px">›</span>
+  </div>
+
+  <!-- Reviews list -->
+  <div class="section-title" style="padding-top:28px">Commentaires récents</div>
+  <div class="reviews-list" id="reviewsList">
+
+    <div class="review-card">
+      <div class="review-verified">✔ Vérifié</div>
+      <div class="review-header">
+        <div class="review-avatar" style="background: linear-gradient(135deg,#7c6aff,#ff6aac)">T</div>
+        <div class="review-meta">
+          <div class="review-author">Thomas R.</div>
+          <div class="review-platform-tag">📸 via Instagram · <span class="review-date">Il y a 2 jours</span></div>
+        </div>
+        <div class="review-stars">
+          <span class="review-star">⭐</span><span class="review-star">⭐</span><span class="review-star">⭐</span>
+          <span class="review-star">⭐</span><span class="review-star">⭐</span>
+        </div>
+      </div>
+      <div class="review-text">Franchement incroyable ! Je gère 5 réseaux sociaux pour mon business et SocialHub m'a sauvé la vie. Plus besoin de jongler entre 5 apps différentes. La fonctionnalité de publication croisée est un vrai game changer.</div>
+      <div class="review-actions">
+        <div class="review-action" onclick="likeReview(this)">👍 Utile <span class="like-count">14</span></div>
+        <div class="review-action" onclick="showToast('Répondre à Thomas')">💬 Répondre</div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar" style="background: linear-gradient(135deg,#0a66c2,#1da1f2)">S</div>
+        <div class="review-meta">
+          <div class="review-author">Sophie M.</div>
+          <div class="review-platform-tag">💼 via LinkedIn · <span class="review-date">Il y a 5 jours</span></div>
+        </div>
+        <div class="review-stars">
+          <span class="review-star">⭐</span><span class="review-star">⭐</span><span class="review-star">⭐</span>
+          <span class="review-star">⭐</span><span class="review-star empty">⭐</span>
+        </div>
+      </div>
+      <div class="review-text">Très bon concept, l'interface est propre et intuitive. Le fil d'activité unifié est vraiment pratique pour ne rater aucune notification. Je retire une étoile car j'attendais une intégration Pinterest qui n'est pas encore là — j'espère qu'elle viendra bientôt !</div>
+      <div class="review-actions">
+        <div class="review-action" onclick="likeReview(this)">👍 Utile <span class="like-count">7</span></div>
+        <div class="review-action" onclick="showToast('Répondre à Sophie')">💬 Répondre</div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-verified">✔ Vérifié</div>
+      <div class="review-header">
+        <div class="review-avatar" style="background: linear-gradient(135deg,#ff0050,#ff6aac)">L</div>
+        <div class="review-meta">
+          <div class="review-author">Lucas K.</div>
+          <div class="review-platform-tag">🎵 via TikTok · <span class="review-date">Il y a 1 semaine</span></div>
+        </div>
+        <div class="review-stars">
+          <span class="review-star">⭐</span><span class="review-star">⭐</span><span class="review-star">⭐</span>
+          <span class="review-star">⭐</span><span class="review-star">⭐</span>
+        </div>
+      </div>
+      <div class="review-text">En tant que créateur de contenu, SocialHub est l'outil que j'attendais depuis des années. La publication simultanée sur TikTok, Instagram et X me fait gagner au moins une heure par jour. L'équipe répond vite aux retours, chapeau !</div>
+      <div class="review-actions">
+        <div class="review-action liked">👍 Utile <span class="like-count">31</span></div>
+        <div class="review-action" onclick="showToast('Répondre à Lucas')">💬 Répondre</div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar" style="background: linear-gradient(135deg,#ff4500,#ffd166)">A</div>
+        <div class="review-meta">
+          <div class="review-author">Amina D.</div>
+          <div class="review-platform-tag">🤖 via Reddit · <span class="review-date">Il y a 2 semaines</span></div>
+        </div>
+        <div class="review-stars">
+          <span class="review-star">⭐</span><span class="review-star">⭐</span><span class="review-star">⭐</span>
+          <span class="review-star empty">⭐</span><span class="review-star empty">⭐</span>
+        </div>
+      </div>
+      <div class="review-text">L'idée est excellente mais il y a encore du travail. L'app plante parfois quand on essaie de charger trop de réseaux en même temps. Le support client est réactif et m'a confirmé qu'un correctif est en cours. Je mettrai à jour mon avis dès que c'est réglé.</div>
+      <div class="review-actions">
+        <div class="review-action" onclick="likeReview(this)">👍 Utile <span class="like-count">5</span></div>
+        <div class="review-action" onclick="showToast('Répondre à Amina')">💬 Répondre</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="height: 30px;"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="setNav(this)">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Accueil</div>
+  </div>
+  <div class="nav-item" onclick="setNav(this); showToast('Fil d\'actualité')">
+    <div class="nav-icon">📰</div>
+    <div class="nav-label">Fil</div>
+  </div>
+  <div class="nav-item" onclick="openCompose()">
+    <div class="nav-icon">✍️</div>
+    <div class="nav-label">Publier</div>
+  </div>
+  <div class="nav-item" onclick="setNav(this); showToast('Messages')">
+    <div class="nav-icon">💬</div>
+    <div class="nav-label">Messages</div>
+  </div>
+  <div class="nav-item" onclick="setNav(this); showToast('Profil')">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profil</div>
+  </div>
+</nav>
+
+<!-- COMPOSE OVERLAY -->
+<div class="compose-overlay" id="composeOverlay" onclick="handleOverlayClick(event)">
+  <div class="compose-sheet">
+    <div class="compose-header">
+      <div class="compose-title">Nouvelle publication</div>
+      <div class="compose-close" onclick="closeCompose()">✕</div>
+    </div>
+    <textarea class="compose-textarea" placeholder="Quoi de neuf ? Partagez avec tous vos réseaux..."></textarea>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px; margin-bottom:4px;">Publier sur :</div>
+    <div class="compose-platforms">
+      <div class="compose-platform selected" onclick="togglePlatform(this)">📘 Facebook</div>
+      <div class="compose-platform selected" onclick="togglePlatform(this)">📸 Instagram</div>
+      <div class="compose-platform selected" onclick="togglePlatform(this)">🐦 X</div>
+      <div class="compose-platform" onclick="togglePlatform(this)">💼 LinkedIn</div>
+      <div class="compose-platform" onclick="togglePlatform(this)">🎵 TikTok</div>
+    </div>
+    <div class="compose-footer">
+      <div class="compose-tools">
+        <div class="compose-tool" onclick="showToast('Image ajoutée')">🖼️</div>
+        <div class="compose-tool" onclick="showToast('GIF ajouté')">🎬</div>
+        <div class="compose-tool" onclick="showToast('Programmation')">📅</div>
+        <div class="compose-tool" onclick="showToast('Localisation')">📍</div>
+      </div>
+      <button class="publish-btn" onclick="publish()">Publier →</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW OVERLAY -->
+<div class="review-overlay" id="reviewOverlay" onclick="handleReviewOverlay(event)">
+  <div class="review-sheet">
+    <div class="review-sheet-header">
+      <div class="review-sheet-title">Votre avis</div>
+      <div class="compose-close" onclick="closeReview()">✕</div>
+    </div>
+
+    <!-- Star picker -->
+    <div class="star-picker" id="starPicker">
+      <span class="star-pick" data-val="1" onclick="pickStar(1)">⭐</span>
+      <span class="star-pick" data-val="2" onclick="pickStar(2)">⭐</span>
+      <span class="star-pick" data-val="3" onclick="pickStar(3)">⭐</span>
+      <span class="star-pick" data-val="4" onclick="pickStar(4)">⭐</span>
+      <span class="star-pick" data-val="5" onclick="pickStar(5)">⭐</span>
+    </div>
+    <div class="star-label" id="starLabel">Touchez une étoile pour noter</div>
+
+    <textarea class="review-input" id="reviewText" placeholder="Partagez votre expérience avec SocialHub…"></textarea>
+
+    <div style="font-size:12px; color:var(--muted); margin-bottom:8px;">Publier depuis :</div>
+    <div class="review-network-pick">
+      <div class="r-platform selected" onclick="this.classList.toggle('selected')">📸 Instagram</div>
+      <div class="r-platform" onclick="this.classList.toggle('selected')">📘 Facebook</div>
+      <div class="r-platform" onclick="this.classList.toggle('selected')">🐦 X</div>
+      <div class="r-platform" onclick="this.classList.toggle('selected')">💼 LinkedIn</div>
+    </div>
+
+    <button class="submit-review-btn" onclick="submitReview()">Publier mon avis ✨</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 10px 20px; border-radius: 100px;
+  font-size: 13px; font-weight: 500;
+  opacity: 0; transition: all 0.3s; z-index: 999;
+  white-space: nowrap; pointer-events: none;
+"></div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2200);
+  }
+
+  function openNetwork(name) {
+    showToast('Ouverture de ' + name + '…');
+  }
+
+  function showAddNetwork() {
+    showToast('Choisissez un réseau à connecter');
+  }
+
+  function openCompose() {
+    document.getElementById('composeOverlay').classList.add('open');
+  }
+
+  function closeCompose() {
+    document.getElementById('composeOverlay').classList.remove('open');
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('composeOverlay')) closeCompose();
+  }
+
+  function togglePlatform(el) {
+    el.classList.toggle('selected');
+  }
+
+  function publish() {
+    const selected = document.querySelectorAll('.compose-platform.selected').length;
+    closeCompose();
+    setTimeout(() => showToast('✅ Publié sur ' + selected + ' réseau(x) !'), 300);
+  }
+
+  function setNav(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ─── REVIEWS ───
+  let selectedStars = 0;
+  const starLabels = ['', 'Mauvais 😞', 'Passable 😐', 'Bien 🙂', 'Très bien 😊', 'Excellent ! 🤩'];
+
+  function openReview() {
+    document.getElementById('reviewOverlay').classList.add('open');
+  }
+  function closeReview() {
+    document.getElementById('reviewOverlay').classList.remove('open');
+  }
+  function handleReviewOverlay(e) {
+    if (e.target === document.getElementById('reviewOverlay')) closeReview();
+  }
+
+  function pickStar(val) {
+    selectedStars = val;
+    document.querySelectorAll('.star-pick').forEach((s, i) => {
+      s.classList.toggle('active', i < val);
+    });
+    document.getElementById('starLabel').textContent = starLabels[val];
+  }
+
+  function likeReview(btn) {
+    if (btn.classList.contains('liked')) return;
+    btn.classList.add('liked');
+    const span = btn.querySelector('.like-count');
+    span.textContent = parseInt(span.textContent) + 1;
+  }
+
+  function submitReview() {
+    const text = document.getElementById('reviewText').value.trim();
+    if (!selectedStars) { showToast('⭐ Choisissez une note d\'abord !'); return; }
+    if (text.length < 10) { showToast('✏️ Écrivez un commentaire plus détaillé'); return; }
+
+    const starsHtml = Array.from({length:5}, (_,i) =>
+      `<span class="review-star${i < selectedStars ? '' : ' empty'}">⭐</span>`).join('');
+
+    const colors = ['linear-gradient(135deg,#7c6aff,#ff6aac)', 'linear-gradient(135deg,#ffd166,#ff9a3c)', 'linear-gradient(135deg,#4cde80,#1da1f2)'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    const card = document.createElement('div');
+    card.className = 'review-card';
+    card.style.animation = 'fadeUp 0.4s ease both';
+    card.innerHTML = `
+      <div class="review-verified">✔ Vérifié</div>
+      <div class="review-header">
+        <div class="review-avatar" style="background:${color}">M</div>
+        <div class="review-meta">
+          <div class="review-author">Marie D. (vous)</div>
+          <div class="review-platform-tag">📸 via Instagram · <span class="review-date">À l'instant</span></div>
+        </div>
+        <div class="review-stars">${starsHtml}</div>
+      </div>
+      <div class="review-text">${text}</div>
+      <div class="review-actions">
+        <div class="review-action" onclick="likeReview(this)">👍 Utile <span class="like-count">0</span></div>
+        <div class="review-action" onclick="showToast('Répondre')">💬 Répondre</div>
+      </div>`;
+
+    const list = document.getElementById('reviewsList');
+    list.insertBefore(card, list.firstChild);
+
+    closeReview();
+    selectedStars = 0;
+    document.getElementById('reviewText').value = '';
+    document.querySelectorAll('.star-pick').forEach(s => s.classList.remove('active'));
+    document.getElementById('starLabel').textContent = 'Touchez une étoile pour noter';
+    setTimeout(() => showToast('✅ Votre avis a été publié !'), 300);
+  }
+</script>
+</body>
+</html>
